@@ -29,6 +29,26 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
   const [error, setError] = useState<string>("");
   const [status, setStatus] = useState<"success" | "error" | "">("");
 
+  // Load reCAPTCHA script & initialize
+  useEffect(() => {
+    const recaptchaReady = () => {
+      (window as any).grecaptcha.ready(() => {
+        console.log("reCAPTCHA is ready!");
+      });
+    };
+
+    if (!(window as any).grecaptcha) {
+      const script = document.createElement("script");
+      script.src = "https://www.google.com/recaptcha/api.js?render=6LfDIpYrAAAAANH8N6nXoXOj_1IZNvtelhpH13Qp";
+      script.async = true;
+      script.defer = true;
+      script.onload = recaptchaReady;
+      document.body.appendChild(script);
+    } else {
+      recaptchaReady();
+    }
+  }, []);
+
   const validateEmail = (email: string): boolean => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailPattern.test(email);
@@ -43,8 +63,14 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
       return;
     }
 
-    // Execute reCAPTCHA v3 and get token dynamically
-    const token = await (window as any).grecaptcha.execute('6LfDIpYrAAAAANH8N6nXoXOj_1IZNvtelhpH13Qp', { action: 'submit' });
+    const grecaptcha = (window as any).grecaptcha;
+    if (!grecaptcha) {
+      setError("Captcha not loaded. Please refresh and try again.");
+      setStatus("error");
+      return;
+    }
+
+    const token = await grecaptcha.execute('6LfDIpYrAAAAANH8N6nXoXOj_1IZNvtelhpH13Qp', { action: 'submit' });
 
     if (!token) {
       setError("Captcha verification failed.");
@@ -79,8 +105,6 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
 
   return (
     <>
-      <Script src="https://www.google.com/recaptcha/api.js?render=6LfDIpYrAAAAANH8N6nXoXOj_1IZNvtelhpH13Qp" strategy="lazyOnload" />
-
       <Column
         overflow="hidden"
         fillWidth
