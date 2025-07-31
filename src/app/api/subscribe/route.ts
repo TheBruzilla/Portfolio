@@ -1,48 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { RecaptchaEnterpriseServiceClient } from '@google-cloud/recaptcha-enterprise';
 
-const RECAPTCHA_PROJECT_ID = 'gen-lang-client-0861323746';
-const RECAPTCHA_SITE_KEY = '6LfDIpYrAAAAANH8N6nXoXOj_1IZNvtelhpH13Qp';
+// ✅ Environment Variables from Vercel Dashboard
+const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;  // Set this in Vercel
+const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY;
+const MAILCHIMP_AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
+const MAILCHIMP_DC = process.env.MAILCHIMP_DC; // Example: 'us22'
+
+// ✅ Helper to compute MD5 hash (Edge Runtime Compatible)
+async function md5(input: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(input);
+  const hashBuffer = await crypto.subtle.digest('MD5', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
 export async function POST(req: NextRequest) {
   const { email, firstName, lastName, phone, recaptchaToken } = await req.json();
 
+  // ✅ Basic Validation
   if (!email || !firstName || !lastName || !phone || !recaptchaToken) {
     return NextResponse.json({ error: 'All fields and captcha are required' }, { status: 400 });
   }
 
-  // Initialize reCAPTCHA Enterprise Client
-  const client = new RecaptchaEnterpriseServiceClient();
+  // ✅ Verify reCAPTCHA v3 Token with Google API
+  const captchaRes = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+  });
 
-  // Build Assessment Request
-  const request = {
-    assessment: {
-      event: {
-        token: recaptchaToken,
-        siteKey: RECAPTCHA_SITE_KEY,
-      },
-    },
-    parent: client.projectPath(RECAPTCHA_PROJECT_ID),
-  };
+  const captchaData = await captchaRes.json();
 
-  const [assessment] = await client.createAssessment(request);
-
-  // Validate Token
-  if (!assessment.tokenProperties.valid) {
-    return NextResponse.json({ error: `Invalid reCAPTCHA token: ${assessment.tokenProperties.invalidReason}` }, { status: 400 });
+  if (!captchaData.success || captchaData.score < 0.5) {
+    return NextResponse.json({ error: 'Captcha verification failed' }, { status: 403 });
   }
 
-  // Risk Score Threshold
-  const riskScore = assessment.riskAnalysis.score;
-  if (riskScore < 0.5) {
-    return NextResponse.json({ error: 'reCAPTCHA failed, suspicious activity detected' }, { status: 403 });
-  }
-
-  // ---- MAILCHIMP LOGIC ----
-  const API_KEY = process.env.MAILCHIMP_API_KEY;
-  const AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
-  const DC = process.env.MAILCHIMP_DC; // e.g., 'us22'
-
+  // ✅ Subscribe User to Mailchimp List
   const subscriberData = {
     email_address: email,
     status: 'subscribed',
@@ -53,10 +47,10 @@ export async function POST(req: NextRequest) {
     }
   };
 
-  const subscribeRes = await fetch(`https://${DC}.api.mailchimp.com/3.0/lists/${AUDIENCE_ID}/members/`, {
+  const subscribeRes = await fetch(`https://${MAILCHIMP_DC}.api.mailchimp.com/3.0/lists/${MAILCHIMP_AUDIENCE_ID}/members/`, {
     method: 'POST',
     headers: {
-      'Authorization': `apikey ${API_KEY}`,
+      'Authorization': `apikey ${MAILCHIMP_API_KEY}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(subscriberData)
@@ -67,18 +61,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: errorData.detail || 'Failed to subscribe' }, { status: subscribeRes.status });
   }
 
-  // Compute MD5 hash using SubtleCrypto
-  async function md5(input: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(input);
-    const hashBuffer = await crypto.subtle.digest('MD5', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  }
-
+  // ✅ Compute MD5 hash for Tagging
   const subscriberHash = await md5(email.toLowerCase());
 
-  // Add Tag
+  // ✅ Add Tag to Subscriber
   const tagData = {
     tags: [
       {
@@ -88,10 +74,10 @@ export async function POST(req: NextRequest) {
     ]
   };
 
-  const tagRes = await fetch(`https://${DC}.api.mailchimp.com/3.0/lists/${AUDIENCE_ID}/members/${subscriberHash}/tags`, {
+  const tagRes = await fetch(`https://${MAILCHIMP_DC}.api.mailchimp.com/3.0/lists/${MAILCHIMP_AUDIENCE_ID}/members/${subscriberHash}/tags`, {
     method: 'POST',
     headers: {
-      'Authorization': `apikey ${API_KEY}`,
+      'Authorization': `apikey ${MAILCHIMP_API_KEY}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify(tagData)
@@ -102,5 +88,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: errorData.detail || 'Failed to add tag' }, { status: tagRes.status });
   }
 
+  // ✅ Success Response
   return NextResponse.json({ message: 'Successfully subscribed and tagged!' }, { status: 200 });
 }
