@@ -47,7 +47,7 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, firstName, lastName, phone })
-       });
+      });
 
       const data = await res.json();
 
@@ -56,6 +56,7 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
         setEmail("");
         setFirstName("");
         setLastName("");
+        setPhone("");
       } else {
         setError(data.error || "Subscription failed.");
         setStatus("error");
@@ -101,9 +102,11 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
           size: mailchimp.effects.lines.size as SpacingToken
         }}
       />
+
       <Heading style={{ position: "relative" }} marginBottom="s" variant="display-strong-xs">
         {newsletter.title}
       </Heading>
+
       <Text
         style={{ position: "relative", maxWidth: "var(--responsive-width-xs)" }}
         wrap="balance"
@@ -114,69 +117,73 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
       </Text>
 
       <form onSubmit={handleSubmit}>
-<form onSubmit={handleSubmit}>
-  <Flex
-    id="mc_embed_signup_scroll"
-    fillWidth
-    maxWidth={24}
-    direction="column"
-    gap="16"
-  >
-    {/* First Name + Last Name side-by-side on Web, stacked on Mobile */}
-    <Flex fillWidth gap="8" mobileDirection="column">
-      <Input
-        id="FNAME"
-        name="FNAME"
-        type="text"
-        placeholder="First Name"
-        value={firstName}
-        onChange={(e) => setFirstName(e.target.value)}
-        required
-      />
-      <Input
-        id="LNAME"
-        name="LNAME"
-        type="text"
-        placeholder="Last Name"
-        value={lastName}
-        onChange={(e) => setLastName(e.target.value)}
-        required
-      />
-    </Flex>
+        <Flex
+          id="mc_embed_signup_scroll"
+          fillWidth
+          maxWidth={24}
+          direction="column"
+          gap="16"
+        >
+          {/* First Name + Last Name side-by-side on Web, stacked on Mobile */}
+          <Flex fillWidth gap="8" mobileDirection="column">
+            <Input
+              id="FNAME"
+              name="FNAME"
+              type="text"
+              placeholder="First Name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+            />
+            <Input
+              id="LNAME"
+              name="LNAME"
+              type="text"
+              placeholder="Last Name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+            />
+          </Flex>
 
-    {/* Phone Number Field (Optional) */}
-    <Input
-      id="PHONE"
-      name="PHONE"
-      type="tel"
-      placeholder="Phone Number (Optional)"
-      value={phone}
-      onChange={(e) => setPhone(e.target.value)}
-      hint="WhatsApp number for wellness insights & article updates"
-    />
+          {/* Email Field */}
+          <Input
+            id="EMAIL"
+            name="EMAIL"
+            type="email"
+            placeholder="Your Email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            errorMessage={error}
+          />
 
-    {/* Email Field */}
-    <Input
-      id="EMAIL"
-      name="EMAIL"
-      type="email"
-      placeholder="Your Email"
-      required
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-      errorMessage={error}
-    />
+          {/* Phone Field + Hint */}
+          <Input
+            id="PHONE"
+            name="PHONE"
+            type="tel"
+            placeholder="Phone (Optional)"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+          <Text
+            variant="caption"
+            onBackground="neutral-medium"
+            style={{ marginTop: "4px" }}
+          >
+            Phone number is optional for reciving updates instantly in whatsapp
+          </Text>
 
-    <div className="clear">
-      <Flex height="48" vertical="center">
-        <Button type="submit" size="m" fillWidth>
-          Subscribe
-        </Button>
-      </Flex>
-    </div>
-  </Flex>
-</form>
-       </form>
+          <div className="clear">
+            <Flex height="48" vertical="center">
+              <Button type="submit" size="m" fillWidth>
+                Subscribe
+              </Button>
+            </Flex>
+          </div>
+        </Flex>
+      </form>
 
       {status === "success" && (
         <Text onBackground="brand-strong" marginTop="s">
