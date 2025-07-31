@@ -8,7 +8,7 @@ const person = {
   },
   role: "Aspiring Doctor & Entrepreneur | Health & Wellness Enthusiast | Building Praneon — A New Way of Holistic Healing",
   avatar: "/images/avatar.png",
-  email: "thevishalbnys@gmail.com",
+  email: "vishal@praneon.com",
   location: "Asia/Kolkata",
   languages: ["English", "French", "Hindi", "Japanese", "Marathi", "Tamil"],
 };
@@ -16,7 +16,11 @@ const person = {
 const newsletter = {
   display: true,
   title: `Subscribe to ${person.firstName}'s Wellness Insights`,
-  description: "I share articles on holistic healing, AI in Iridology, and modern wellness entrepreneurship.",
+  description: "I Will Share Articles & Wellness insights  on Wellness, Tech & Healing...",
+  mailchimp: {
+    apiKey: process.env.MAILCHIMP_API_KEY,
+    audience: process.env.MAILCHIMP_AUDIENCE_ID,
+  },
 };
 
 const social = [
@@ -52,7 +56,7 @@ const home = {
   featured: {
     display: true,
     title: "Recent Project: AI-Powered Iridology",
-    href: "/work/iridology-ai",
+    href: "/work/iridology-ai",  
   },
   subline: "I'm Vishal, a final-year BNYS student, integrating ancient naturopathy with modern AI-driven diagnostics. Exploring holistic wellness through my venture.",
 };
@@ -93,16 +97,16 @@ const about = {
         ],
         images: [], // Added empty images array
       },
-      {
-        company: "BNYS Internship – Pain Management Clinic",
-        timeframe: "2026 - 2027",
-        role: "Internship Trainee",
-        achievements: [
-          "Performed supervised clinical assessments for musculoskeletal disorders using Chiropractic & Acupuncture modalities.",
-          "Assisted in therapeutic Yoga sessions for lifestyle disease management and stress reduction.",
-        ],
-        images: [], // Added empty images array
-      },
+      //{
+      //  company: "BNYS Internship – Pain Management Clinic",
+      //  timeframe: "2026 - 2027",
+      //  role: "Internship Trainee",
+      //  achievements: [
+      //    "Performed supervised clinical assessments for musculoskeletal disorders using Chiropractic & Acupuncture modalities.",
+      //    "Assisted in therapeutic Yoga sessions for lifestyle disease management and stress reduction.",
+      //  ],
+      //  images: [], // Added empty images array
+      //},
     ],
   },
   studies: {

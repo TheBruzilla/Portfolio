@@ -177,7 +177,7 @@ const schema = {
   type: "Organization",
   name: "Praneon",
   description: home.description,
-  email: "thevishalbnys@gmail.com",
+  email: "vishal@praneon.com",
 };
 
 // social links
