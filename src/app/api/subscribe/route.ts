@@ -8,6 +8,16 @@ const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY;
 const MAILCHIMP_AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
 const MAILCHIMP_DC = process.env.MAILCHIMP_DC;
 
+async function safeParseJSON(response: Response) {
+  const text = await response.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch (err) {
+    console.error("Failed to parse JSON:", text);
+    return {};
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { email, firstName, lastName, phone, recaptchaToken } = await req.json();
@@ -53,7 +63,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(subscriberData)
     });
 
-    const subscribeData = await subscribeRes.json();
+    const subscribeData = await safeParseJSON(subscribeRes);
     console.log("Mailchimp Subscribe Response:", subscribeRes.status, subscribeData);
 
     if (subscribeRes.status >= 400 && subscribeData.title !== "Member Exists") {
@@ -61,10 +71,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: subscribeData.detail || 'Failed to subscribe' }, { status: subscribeRes.status });
     }
 
-    // Compute Subscriber Hash using Node.js Crypto
     const subscriberHash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex');
 
-    // Add Tags to Subscriber
     const tagData = {
       tags: [
         {
@@ -83,7 +91,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(tagData)
     });
 
-    const tagResponseData = await tagRes.json();
+    const tagResponseData = await safeParseJSON(tagRes);
     console.log("Mailchimp Tag Response:", tagRes.status, tagResponseData);
 
     if (tagRes.status >= 400) {
