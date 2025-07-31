@@ -1,17 +1,12 @@
+export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 const MAILCHIMP_API_KEY = process.env.MAILCHIMP_API_KEY;
 const MAILCHIMP_AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
 const MAILCHIMP_DC = process.env.MAILCHIMP_DC;
-
-async function md5(input: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(input);
-  const hashBuffer = await crypto.subtle.digest('MD5', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
 
 export async function POST(req: NextRequest) {
   try {
@@ -66,8 +61,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: subscribeData.detail || 'Failed to subscribe' }, { status: subscribeRes.status });
     }
 
-    // Compute Subscriber Hash
-    const subscriberHash = await md5(email.toLowerCase());
+    // Compute Subscriber Hash using Node.js Crypto
+    const subscriberHash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex');
 
     // Add Tags to Subscriber
     const tagData = {
