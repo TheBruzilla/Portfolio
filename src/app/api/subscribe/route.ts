@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
   const API_KEY = process.env.MAILCHIMP_API_KEY;
   const AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
-  const DC = process.env.MAILCHIMP_DC; // Example: 'us22'
+  const DC = process.env.MAILCHIMP_DC; // e.g., 'us22'
 
   // Step 1: Subscribe the user
   const subscriberData = {
@@ -36,9 +36,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: errorData.detail || 'Failed to subscribe' }, { status: subscribeRes.status });
   }
 
-  // Step 2: Add Tag to the User
-  const subscriberHash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex');
+  // ✅ Step 2: Compute MD5 hash using SubtleCrypto (Edge Runtime friendly)
+  async function md5(input: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(input);
+    const hashBuffer = await crypto.subtle.digest('MD5', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
 
+  const subscriberHash = await md5(email.toLowerCase());
+
+  // Step 3: Add Tag to the User
   const tagData = {
     tags: [
       {
