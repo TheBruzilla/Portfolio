@@ -138,7 +138,7 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
         </Text>
       )}
       {status === "error" && (
-        <Text onBackground="negative" marginTop="s">
+        <Text onBackground="accent-strong" marginTop="s">
           {error}
         </Text>
       )}
