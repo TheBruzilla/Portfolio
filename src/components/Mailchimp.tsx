@@ -133,8 +133,8 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
       </form>
 
       {status === "success" && (
-        <Text onBackground="positive" marginTop="s">
-          Subscription successful. Please check your email.
+        <Text onBackground="brand-strong" marginTop="s">
+        Subscription successful. Please check your email.
         </Text>
       )}
       {status === "error" && (
