@@ -79,7 +79,10 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
         top="0"
         position="absolute"
         mask={mailchimp.effects.mask}
-        gradient={mailchimp.effects.gradient}
+        gradient={{
+          ...mailchimp.effects.gradient,
+          opacity: mailchimp.effects.gradient.opacity as opacity // 👈 Fix applied here!
+        }}
         dots={mailchimp.effects.dots}
         grid={mailchimp.effects.grid}
         lines={mailchimp.effects.lines}
@@ -118,7 +121,6 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
         </Flex>
       </form>
 
-      {/* Success/Error Message */}
       {status === "success" && (
         <Text onBackground="positive" marginTop="s">
           Subscription successful. Please check your email.
