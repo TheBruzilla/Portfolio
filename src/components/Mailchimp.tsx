@@ -75,18 +75,27 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
       background="surface"
       border="neutral-alpha-weak"
     >
-      <Background
-        top="0"
-        position="absolute"
-        mask={mailchimp.effects.mask}
-        gradient={{
-          ...mailchimp.effects.gradient,
-          opacity: mailchimp.effects.gradient.opacity as opacity // 👈 Fix applied here!
-        }}
-        dots={mailchimp.effects.dots}
-        grid={mailchimp.effects.grid}
-        lines={mailchimp.effects.lines}
-      />
+<Background
+  top="0"
+  position="absolute"
+  mask={mailchimp.effects.mask}
+  gradient={{
+    ...mailchimp.effects.gradient,
+    opacity: mailchimp.effects.gradient.opacity as opacity
+  }}
+  dots={{
+    ...mailchimp.effects.dots,
+    opacity: mailchimp.effects.dots.opacity as opacity // 👈 FIX HERE
+  }}
+  grid={{
+    ...mailchimp.effects.grid,
+    opacity: mailchimp.effects.grid.opacity as opacity // 👈 FIX HERE
+  }}
+  lines={{
+    ...mailchimp.effects.lines,
+    opacity: mailchimp.effects.lines.opacity as opacity // 👈 FIX HERE
+  }}
+/>
       <Heading style={{ position: "relative" }} marginBottom="s" variant="display-strong-xs">
         {newsletter.title}
       </Heading>
