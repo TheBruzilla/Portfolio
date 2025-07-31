@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Script from "next/script";
 import { mailchimp } from "@/resources";
 import {
   Button,
@@ -22,14 +21,13 @@ type NewsletterProps = {
 };
 
 export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
-  const [email, setEmail] = useState<string>("");
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
-  const [error, setError] = useState<string>("");
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
   const [status, setStatus] = useState<"success" | "error" | "">("");
 
-  // Load reCAPTCHA script & initialize
   useEffect(() => {
     const recaptchaReady = () => {
       (window as any).grecaptcha.ready(() => {
@@ -49,13 +47,12 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
     }
   }, []);
 
-  const validateEmail = (email: string): boolean => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailPattern.test(email);
-  };
+  const validateEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
 
     if (!validateEmail(email)) {
       setError("Please enter a valid email address.");
@@ -87,12 +84,13 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
 
       const data = await res.json();
 
-      if (res.ok) {
+      if (res.ok && data.success) {
         setStatus("success");
         setEmail("");
         setFirstName("");
         setLastName("");
         setPhone("");
+        setError("");
       } else {
         setError(data.error || "Subscription failed.");
         setStatus("error");
@@ -162,46 +160,13 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
             gap="16"
           >
             <Flex fillWidth gap="8" mobileDirection="column">
-              <Input
-                id="FNAME"
-                name="FNAME"
-                type="text"
-                placeholder="First Name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-              />
-              <Input
-                id="LNAME"
-                name="LNAME"
-                type="text"
-                placeholder="Last Name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-              />
+              <Input id="FNAME" name="FNAME" type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+              <Input id="LNAME" name="LNAME" type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
             </Flex>
 
-            <Input
-              id="EMAIL"
-              name="EMAIL"
-              type="email"
-              placeholder="Your Email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              errorMessage={error}
-            />
+            <Input id="EMAIL" name="EMAIL" type="email" placeholder="Your Email" required value={email} onChange={(e) => setEmail(e.target.value)} errorMessage={error} />
 
-            <Input
-              id="PHONE"
-              name="PHONE"
-              type="tel"
-              placeholder="Phone"
-              required
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
+            <Input id="PHONE" name="PHONE" type="tel" placeholder="Phone" required value={phone} onChange={(e) => setPhone(e.target.value)} />
 
             <div className="clear">
               <Flex height="48" vertical="center">

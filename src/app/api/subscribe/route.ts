@@ -89,5 +89,6 @@ export async function POST(req: NextRequest) {
   }
 
   // ✅ Success Response
-  return NextResponse.json({ message: 'Successfully subscribed and tagged!' }, { status: 200 });
+  return NextResponse.json({ success: true, message: 'Successfully subscribed and tagged!' }, { status: 200 });
+
 }
