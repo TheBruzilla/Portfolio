@@ -22,6 +22,9 @@ type NewsletterProps = {
 
 export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
   const [email, setEmail] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [status, setStatus] = useState<"success" | "error" | "">("");
 
@@ -42,17 +45,17 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
     try {
       const res = await fetch("/api/subscribe", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email })
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, firstName, lastName, phone })
+       });
 
       const data = await res.json();
 
       if (res.ok) {
         setStatus("success");
-        setEmail("");  // clear input field
+        setEmail("");
+        setFirstName("");
+        setLastName("");
       } else {
         setError(data.error || "Subscription failed.");
         setStatus("error");
@@ -75,29 +78,29 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
       background="surface"
       border="neutral-alpha-weak"
     >
-<Background
-  top="0"
-  position="absolute"
-  mask={mailchimp.effects.mask}
-  gradient={{
-    ...mailchimp.effects.gradient,
-    opacity: mailchimp.effects.gradient.opacity as opacity
-  }}
-  dots={{
-    ...mailchimp.effects.dots,
-    opacity: mailchimp.effects.dots.opacity as opacity,
-    size: mailchimp.effects.dots.size as SpacingToken  // ✅ Already FIXED
-  }}
-  grid={{
-    ...mailchimp.effects.grid,
-    opacity: mailchimp.effects.grid.opacity as opacity
-  }}
-  lines={{
-    ...mailchimp.effects.lines,
-    opacity: mailchimp.effects.lines.opacity as opacity,
-    size: mailchimp.effects.lines.size as SpacingToken  // 👈 ADD THIS FIX HERE!
-  }}
-/>
+      <Background
+        top="0"
+        position="absolute"
+        mask={mailchimp.effects.mask}
+        gradient={{
+          ...mailchimp.effects.gradient,
+          opacity: mailchimp.effects.gradient.opacity as opacity
+        }}
+        dots={{
+          ...mailchimp.effects.dots,
+          opacity: mailchimp.effects.dots.opacity as opacity,
+          size: mailchimp.effects.dots.size as SpacingToken
+        }}
+        grid={{
+          ...mailchimp.effects.grid,
+          opacity: mailchimp.effects.grid.opacity as opacity
+        }}
+        lines={{
+          ...mailchimp.effects.lines,
+          opacity: mailchimp.effects.lines.opacity as opacity,
+          size: mailchimp.effects.lines.size as SpacingToken
+        }}
+      />
       <Heading style={{ position: "relative" }} marginBottom="s" variant="display-strong-xs">
         {newsletter.title}
       </Heading>
@@ -111,30 +114,73 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
       </Text>
 
       <form onSubmit={handleSubmit}>
-        <Flex id="mc_embed_signup_scroll" fillWidth maxWidth={24} mobileDirection="column" gap="8">
-          <Input
-            id="mce-EMAIL"
-            name="EMAIL"
-            type="email"
-            placeholder="Your Email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            errorMessage={error}
-          />
-          <div className="clear">
-            <Flex height="48" vertical="center">
-              <Button type="submit" size="m" fillWidth>
-                Subscribe
-              </Button>
-            </Flex>
-          </div>
-        </Flex>
-      </form>
+<form onSubmit={handleSubmit}>
+  <Flex
+    id="mc_embed_signup_scroll"
+    fillWidth
+    maxWidth={24}
+    direction="column"
+    gap="16"
+  >
+    {/* First Name + Last Name side-by-side on Web, stacked on Mobile */}
+    <Flex fillWidth gap="8" mobileDirection="column">
+      <Input
+        id="FNAME"
+        name="FNAME"
+        type="text"
+        placeholder="First Name"
+        value={firstName}
+        onChange={(e) => setFirstName(e.target.value)}
+        required
+      />
+      <Input
+        id="LNAME"
+        name="LNAME"
+        type="text"
+        placeholder="Last Name"
+        value={lastName}
+        onChange={(e) => setLastName(e.target.value)}
+        required
+      />
+    </Flex>
+
+    {/* Phone Number Field (Optional) */}
+    <Input
+      id="PHONE"
+      name="PHONE"
+      type="tel"
+      placeholder="Phone Number (Optional)"
+      value={phone}
+      onChange={(e) => setPhone(e.target.value)}
+      hint="WhatsApp number for wellness insights & article updates"
+    />
+
+    {/* Email Field */}
+    <Input
+      id="EMAIL"
+      name="EMAIL"
+      type="email"
+      placeholder="Your Email"
+      required
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      errorMessage={error}
+    />
+
+    <div className="clear">
+      <Flex height="48" vertical="center">
+        <Button type="submit" size="m" fillWidth>
+          Subscribe
+        </Button>
+      </Flex>
+    </div>
+  </Flex>
+</form>
+       </form>
 
       {status === "success" && (
         <Text onBackground="brand-strong" marginTop="s">
-        Subscription successful. Please check your email.
+          Subscription successful. Please check your email.
         </Text>
       )}
       {status === "error" && (

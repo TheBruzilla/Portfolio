@@ -1,38 +1,66 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
-  const { email } = await req.json();
+  const { email, firstName, lastName, phone } = await req.json();
 
-  if (!email || !email.includes('@')) {
-    return NextResponse.json({ error: 'A valid email is required' }, { status: 400 });
+  if (!email) {
+    return NextResponse.json({ error: 'Email is required' }, { status: 400 });
   }
 
   const API_KEY = process.env.MAILCHIMP_API_KEY;
   const AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
-  const DC = process.env.MAILCHIMP_DC; // Data Center (like 'us22')
+  const DC = process.env.MAILCHIMP_DC; // Example: 'us22'
 
-  if (!API_KEY || !AUDIENCE_ID || !DC) {
-    return NextResponse.json({ error: 'Missing Mailchimp environment variables' }, { status: 500 });
-  }
-
-  const data = {
+  // Step 1: Subscribe the user
+  const subscriberData = {
     email_address: email,
-    status: 'subscribed'
+    status: 'subscribed',
+    merge_fields: {
+      FNAME: firstName || '',
+      LNAME: lastName || '',
+      PHONE: phone || ''
+    }
   };
 
-  const response = await fetch(`https://${DC}.api.mailchimp.com/3.0/lists/${AUDIENCE_ID}/members/`, {
+  const subscribeRes = await fetch(`https://${DC}.api.mailchimp.com/3.0/lists/${AUDIENCE_ID}/members/`, {
     method: 'POST',
     headers: {
-      Authorization: `apikey ${API_KEY}`,
+      'Authorization': `apikey ${API_KEY}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(subscriberData)
   });
 
-  if (response.status >= 400) {
-    const errorData = await response.json();
-    return NextResponse.json({ error: errorData.detail || 'Failed to subscribe user' }, { status: response.status });
+  if (subscribeRes.status >= 400) {
+    const errorData = await subscribeRes.json();
+    return NextResponse.json({ error: errorData.detail || 'Failed to subscribe' }, { status: subscribeRes.status });
   }
 
-  return NextResponse.json({ message: 'Successfully subscribed!' }, { status: 200 });
+  // Step 2: Add Tag to the User
+  const subscriberHash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex');
+
+  const tagData = {
+    tags: [
+      {
+        name: "Newsletter Subscriber",
+        status: "active"
+      }
+    ]
+  };
+
+  const tagRes = await fetch(`https://${DC}.api.mailchimp.com/3.0/lists/${AUDIENCE_ID}/members/${subscriberHash}/tags`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `apikey ${API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(tagData)
+  });
+
+  if (tagRes.status >= 400) {
+    const errorData = await tagRes.json();
+    return NextResponse.json({ error: errorData.detail || 'Failed to add tag' }, { status: tagRes.status });
+  }
+
+  return NextResponse.json({ message: 'Successfully subscribed and tagged!' }, { status: 200 });
 }
