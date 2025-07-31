@@ -1,194 +1,66 @@
-"use client";
+import { NextResponse } from "next/server";
+import Mailchimp from "@mailchimp/mailchimp_marketing";
 
-import { useState, useEffect } from "react";
-import { mailchimp } from "@/resources";
-import {
-  Button,
-  Flex,
-  Heading,
-  Input,
-  Text,
-  Background,
-  Column,
-  opacity,
-  SpacingToken
-} from "@once-ui-system/core";
+// Configure Mailchimp
+Mailchimp.setConfig({
+  apiKey: process.env.MAILCHIMP_API_KEY,
+  server: process.env.MAILCHIMP_SERVER_PREFIX  // e.g., 'us21'
+});
 
-type NewsletterProps = {
-  display: boolean;
-  title: string | JSX.Element;
-  description: string | JSX.Element;
-};
+// reCAPTCHA Secret Key
+const RECAPTCHA_SECRET = process.env.RECAPTCHA_SECRET_KEY;
 
-export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [error, setError] = useState("");
-  const [status, setStatus] = useState<"success" | "error" | "">("");
+export async function POST(req: Request) {
+  try {
+    const { email, firstName, lastName, phone, recaptchaToken } = await req.json();
 
-  useEffect(() => {
-    const recaptchaReady = () => {
-      (window as any).grecaptcha.ready(() => {
-        console.log("reCAPTCHA is ready!");
-      });
-    };
-
-    if (!(window as any).grecaptcha) {
-      const script = document.createElement("script");
-      script.src = "https://www.google.com/recaptcha/api.js?render=6LfDIpYrAAAAANH8N6nXoXOj_1IZNvtelhpH13Qp";
-      script.async = true;
-      script.defer = true;
-      script.onload = recaptchaReady;
-      document.body.appendChild(script);
-    } else {
-      recaptchaReady();
-    }
-  }, []);
-
-  const validateEmail = (email: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email address.");
-      setStatus("error");
-      return;
+    // Validate required fields
+    if (!email || !firstName || !lastName || !phone || !recaptchaToken) {
+      return NextResponse.json({ success: false, error: "All fields are required." }, { status: 400 });
     }
 
-    const grecaptcha = (window as any).grecaptcha;
-    if (!grecaptcha) {
-      setError("Captcha not loaded. Please refresh and try again.");
-      setStatus("error");
-      return;
+    // 1. Verify reCAPTCHA Token
+    const captchaVerifyRes = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `secret=${RECAPTCHA_SECRET}&response=${recaptchaToken}`
+    });
+
+    const captchaData = await captchaVerifyRes.json();
+
+    if (!captchaData.success || captchaData.score < 0.5) {
+      return NextResponse.json({ success: false, error: "reCAPTCHA verification failed." }, { status: 400 });
     }
 
-    const token = await grecaptcha.execute('6LfDIpYrAAAAANH8N6nXoXOj_1IZNvtelhpH13Qp', { action: 'submit' });
-
-    if (!token) {
-      setError("Captcha verification failed.");
-      setStatus("error");
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, firstName, lastName, phone, recaptchaToken: token })
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        setStatus("success");
-        setEmail("");
-        setFirstName("");
-        setLastName("");
-        setPhone("");
-        setError("");
-      } else {
-        setError(data.error || "Subscription failed.");
-        setStatus("error");
+    // 2. Add Subscriber to Mailchimp List
+    const subscribeResponse = await Mailchimp.lists.addListMember(process.env.MAILCHIMP_AUDIENCE_ID as string, {
+      email_address: email,
+      status: "subscribed",
+      merge_fields: {
+        FNAME: firstName,
+        LNAME: lastName,
+        PHONE: phone
       }
-    } catch (err) {
-      setError("Something went wrong.");
-      setStatus("error");
+    });
+
+    // 3. Add Tags to the Contact
+    await Mailchimp.lists.updateListMemberTags(process.env.MAILCHIMP_AUDIENCE_ID as string, subscribeResponse.id, {
+      tags: [
+        { name: "Website Signup", status: "active" },
+        { name: "New Subscriber", status: "active" }
+      ]
+    });
+
+    return NextResponse.json({ success: true, message: "Successfully subscribed!" }, { status: 200 });
+
+  } catch (error: any) {
+    console.error("Mailchimp API Error:", error);
+
+    // Handle "Member Exists" case gracefully
+    if (error.status === 400 && error.response?.body?.title === "Member Exists") {
+      return NextResponse.json({ success: true, message: "You're already subscribed." }, { status: 200 });
     }
-  };
 
-  return (
-    <>
-      <Column
-        overflow="hidden"
-        fillWidth
-        padding="xl"
-        radius="l"
-        marginBottom="m"
-        horizontal="center"
-        align="center"
-        background="surface"
-        border="neutral-alpha-weak"
-      >
-        <Background
-          top="0"
-          position="absolute"
-          mask={mailchimp.effects.mask}
-          gradient={{
-            ...mailchimp.effects.gradient,
-            opacity: mailchimp.effects.gradient.opacity as opacity
-          }}
-          dots={{
-            ...mailchimp.effects.dots,
-            opacity: mailchimp.effects.dots.opacity as opacity,
-            size: mailchimp.effects.dots.size as SpacingToken
-          }}
-          grid={{
-            ...mailchimp.effects.grid,
-            opacity: mailchimp.effects.grid.opacity as opacity
-          }}
-          lines={{
-            ...mailchimp.effects.lines,
-            opacity: mailchimp.effects.lines.opacity as opacity,
-            size: mailchimp.effects.lines.size as SpacingToken
-          }}
-        />
-
-        <Heading style={{ position: "relative" }} marginBottom="s" variant="display-strong-xs">
-          {newsletter.title}
-        </Heading>
-
-        <Text
-          style={{ position: "relative", maxWidth: "var(--responsive-width-xs)" }}
-          wrap="balance"
-          marginBottom="l"
-          onBackground="neutral-medium"
-        >
-          {newsletter.description}
-        </Text>
-
-        <form onSubmit={handleSubmit}>
-          <Flex
-            id="mc_embed_signup_scroll"
-            fillWidth
-            maxWidth={24}
-            direction="column"
-            gap="16"
-          >
-            <Flex fillWidth gap="8" mobileDirection="column">
-              <Input id="FNAME" name="FNAME" type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
-              <Input id="LNAME" name="LNAME" type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
-            </Flex>
-
-            <Input id="EMAIL" name="EMAIL" type="email" placeholder="Your Email" required value={email} onChange={(e) => setEmail(e.target.value)} errorMessage={error} />
-
-            <Input id="PHONE" name="PHONE" type="tel" placeholder="Phone" required value={phone} onChange={(e) => setPhone(e.target.value)} />
-
-            <div className="clear">
-              <Flex height="48" vertical="center">
-                <Button type="submit" size="m" fillWidth>
-                  Subscribe
-                </Button>
-              </Flex>
-            </div>
-          </Flex>
-        </form>
-
-        {status === "success" && (
-          <Text onBackground="brand-strong" marginTop="s">
-            Subscription successful. Please check your email.
-          </Text>
-        )}
-        {status === "error" && (
-          <Text onBackground="accent-strong" marginTop="s">
-            {error}
-          </Text>
-        )}
-      </Column>
-    </>
-  );
-};
+    return NextResponse.json({ success: false, error: error.message || "Subscription failed." }, { status: 500 });
+  }
+}
