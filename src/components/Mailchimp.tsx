@@ -11,7 +11,8 @@ import {
   Background,
   Column,
   opacity,
-  SpacingToken
+  SpacingToken,
+  MaskProps
 } from "@once-ui-system/core";
 
 type NewsletterProps = {
@@ -116,7 +117,7 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
       <Background
         top="0"
         position="absolute"
-        mask={mailchimpEffects.mask}
+        mask={{ src: mailchimpEffects.mask } as MaskProps} // Fixed Type
         gradient={{
           ...mailchimpEffects.gradient,
           opacity: mailchimpEffects.gradient.opacity as opacity
