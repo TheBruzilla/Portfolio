@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { mailchimp } from "@/resources";
+import { mailchimpEffects } from "@/resources/mailchimpEffects";
 import {
   Button,
   Flex,
@@ -102,93 +102,91 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
   };
 
   return (
-    <>
-      <Column
-        overflow="hidden"
-        fillWidth
-        padding="xl"
-        radius="l"
-        marginBottom="m"
-        horizontal="center"
-        align="center"
-        background="surface"
-        border="neutral-alpha-weak"
+    <Column
+      overflow="hidden"
+      fillWidth
+      padding="xl"
+      radius="l"
+      marginBottom="m"
+      horizontal="center"
+      align="center"
+      background="surface"
+      border="neutral-alpha-weak"
+    >
+      <Background
+        top="0"
+        position="absolute"
+        mask={mailchimpEffects.mask}
+        gradient={{
+          ...mailchimpEffects.gradient,
+          opacity: mailchimpEffects.gradient.opacity as opacity
+        }}
+        dots={{
+          ...mailchimpEffects.dots,
+          opacity: mailchimpEffects.dots.opacity as opacity,
+          size: mailchimpEffects.dots.size as SpacingToken
+        }}
+        grid={{
+          ...mailchimpEffects.grid,
+          opacity: mailchimpEffects.grid.opacity as opacity
+        }}
+        lines={{
+          ...mailchimpEffects.lines,
+          opacity: mailchimpEffects.lines.opacity as opacity,
+          size: mailchimpEffects.lines.size as SpacingToken
+        }}
+      />
+
+      <Heading style={{ position: "relative" }} marginBottom="s" variant="display-strong-xs">
+        {newsletter.title}
+      </Heading>
+
+      <Text
+        style={{ position: "relative", maxWidth: "var(--responsive-width-xs)" }}
+        wrap="balance"
+        marginBottom="l"
+        onBackground="neutral-medium"
       >
-        <Background
-          top="0"
-          position="absolute"
-          mask={mailchimp.effects.mask}
-          gradient={{
-            ...mailchimp.effects.gradient,
-            opacity: mailchimp.effects.gradient.opacity as opacity
-          }}
-          dots={{
-            ...mailchimp.effects.dots,
-            opacity: mailchimp.effects.dots.opacity as opacity,
-            size: mailchimp.effects.dots.size as SpacingToken
-          }}
-          grid={{
-            ...mailchimp.effects.grid,
-            opacity: mailchimp.effects.grid.opacity as opacity
-          }}
-          lines={{
-            ...mailchimp.effects.lines,
-            opacity: mailchimp.effects.lines.opacity as opacity,
-            size: mailchimp.effects.lines.size as SpacingToken
-          }}
-        />
+        {newsletter.description}
+      </Text>
 
-        <Heading style={{ position: "relative" }} marginBottom="s" variant="display-strong-xs">
-          {newsletter.title}
-        </Heading>
-
-        <Text
-          style={{ position: "relative", maxWidth: "var(--responsive-width-xs)" }}
-          wrap="balance"
-          marginBottom="l"
-          onBackground="neutral-medium"
+      <form onSubmit={handleSubmit}>
+        <Flex
+          id="mc_embed_signup_scroll"
+          fillWidth
+          maxWidth={24}
+          direction="column"
+          gap="16"
         >
-          {newsletter.description}
-        </Text>
-
-        <form onSubmit={handleSubmit}>
-          <Flex
-            id="mc_embed_signup_scroll"
-            fillWidth
-            maxWidth={24}
-            direction="column"
-            gap="16"
-          >
-            <Flex fillWidth gap="8" mobileDirection="column">
-              <Input id="FNAME" name="FNAME" type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
-              <Input id="LNAME" name="LNAME" type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
-            </Flex>
-
-            <Input id="EMAIL" name="EMAIL" type="email" placeholder="Your Email" required value={email} onChange={(e) => setEmail(e.target.value)} errorMessage={error} />
-
-            <Input id="PHONE" name="PHONE" type="tel" placeholder="Phone" required value={phone} onChange={(e) => setPhone(e.target.value)} />
-
-            <div className="clear">
-              <Flex height="48" vertical="center">
-                <Button type="submit" size="m" fillWidth>
-                  Subscribe
-                </Button>
-              </Flex>
-            </div>
+          <Flex fillWidth gap="8" mobileDirection="column">
+            <Input id="FNAME" name="FNAME" type="text" placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+            <Input id="LNAME" name="LNAME" type="text" placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
           </Flex>
-        </form>
 
-        {status === "success" && (
-          <Text onBackground="brand-strong" marginTop="s">
-            Subscription successful. Please check your email.
-          </Text>
-        )}
-        {status === "error" && (
-          <Text onBackground="accent-strong" marginTop="s">
-            {error}
-          </Text>
-        )}
-      </Column>
-    </>
+          <Input id="EMAIL" name="EMAIL" type="email" placeholder="Your Email" required value={email} onChange={(e) => setEmail(e.target.value)} errorMessage={error} />
+
+          <Input id="PHONE" name="PHONE" type="tel" placeholder="Phone" required value={phone} onChange={(e) => setPhone(e.target.value)} />
+
+          <div className="clear">
+            <Flex height="48" vertical="center">
+              <Button type="submit" size="m" fillWidth>
+                Subscribe
+              </Button>
+            </Flex>
+          </div>
+        </Flex>
+      </form>
+
+      {status === "success" && (
+        <Text onBackground="brand-strong" marginTop="s">
+          Subscription successful. Please check your email.
+        </Text>
+      )}
+      {status === "error" && (
+        <Text onBackground="accent-strong" marginTop="s">
+          {error}
+        </Text>
+      )}
+    </Column>
   );
 };
