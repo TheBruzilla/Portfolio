@@ -32,23 +32,42 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Invalid reCAPTCHA token: ${assessment.tokenProperties.invalidReason}` }, { status: 400 });
   }
 
-  // Validate Action if needed (optional)
-  // if (assessment.tokenProperties.action !== 'subscribe_form') {
-  //   return NextResponse.json({ error: 'Action mismatch' }, { status: 400 });
-  // }
-
-  // Risk Score Threshold (0.0 → Bot | 1.0 → Human)
+  // Risk Score Threshold
   const riskScore = assessment.riskAnalysis.score;
   if (riskScore < 0.5) {
     return NextResponse.json({ error: 'reCAPTCHA failed, suspicious activity detected' }, { status: 403 });
   }
 
-  // ✅ Proceed with Mailchimp Subscription Logic...
-  // (keep your existing Mailchimp subscription + tagging code here)
+  // ---- MAILCHIMP LOGIC ----
+  const API_KEY = process.env.MAILCHIMP_API_KEY;
+  const AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
+  const DC = process.env.MAILCHIMP_DC; // e.g., 'us22'
 
-  return NextResponse.json({ message: 'Successfully subscribed and passed reCAPTCHA Enterprise' }, { status: 200 });
-}
-  // ✅ Compute MD5 hash using SubtleCrypto
+  const subscriberData = {
+    email_address: email,
+    status: 'subscribed',
+    merge_fields: {
+      FNAME: firstName,
+      LNAME: lastName,
+      PHONE: phone
+    }
+  };
+
+  const subscribeRes = await fetch(`https://${DC}.api.mailchimp.com/3.0/lists/${AUDIENCE_ID}/members/`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `apikey ${API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(subscriberData)
+  });
+
+  if (subscribeRes.status >= 400) {
+    const errorData = await subscribeRes.json();
+    return NextResponse.json({ error: errorData.detail || 'Failed to subscribe' }, { status: subscribeRes.status });
+  }
+
+  // Compute MD5 hash using SubtleCrypto
   async function md5(input: string): Promise<string> {
     const encoder = new TextEncoder();
     const data = encoder.encode(input);
@@ -59,7 +78,7 @@ export async function POST(req: NextRequest) {
 
   const subscriberHash = await md5(email.toLowerCase());
 
-  // Step 3: Add Tag to the User
+  // Add Tag
   const tagData = {
     tags: [
       {
