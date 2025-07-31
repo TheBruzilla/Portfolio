@@ -1,24 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
-  const { email, firstName, lastName, phone } = await req.json();
+  const { email, firstName, lastName, phone, recaptchaToken } = await req.json();
 
   if (!email) {
     return NextResponse.json({ error: 'Email is required' }, { status: 400 });
   }
 
+  if (!recaptchaToken) {
+    return NextResponse.json({ error: 'Captcha verification failed' }, { status: 400 });
+  }
+
+  // ✅ Step 1: Verify reCAPTCHA Token with Google
+  const captchaVerifyRes = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+  });
+
+  const captchaData = await captchaVerifyRes.json();
+
+  if (!captchaData.success) {
+    return NextResponse.json({ error: 'Captcha verification failed' }, { status: 400 });
+  }
+
+  // ✅ Proceed with Mailchimp Subscription Logic
   const API_KEY = process.env.MAILCHIMP_API_KEY;
   const AUDIENCE_ID = process.env.MAILCHIMP_AUDIENCE_ID;
   const DC = process.env.MAILCHIMP_DC; // e.g., 'us22'
 
-  // Step 1: Subscribe the user
+  // Step 2: Subscribe the user
   const subscriberData = {
     email_address: email,
     status: 'subscribed',
     merge_fields: {
-      FNAME: firstName || '',
-      LNAME: lastName || '',
-      PHONE: phone || ''
+      FNAME: firstName,
+      LNAME: lastName,
+      PHONE: phone
     }
   };
 
@@ -36,7 +54,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: errorData.detail || 'Failed to subscribe' }, { status: subscribeRes.status });
   }
 
-  // ✅ Step 2: Compute MD5 hash using SubtleCrypto (Edge Runtime friendly)
+  // ✅ Compute MD5 hash using SubtleCrypto
   async function md5(input: string): Promise<string> {
     const encoder = new TextEncoder();
     const data = encoder.encode(input);
@@ -51,7 +69,7 @@ export async function POST(req: NextRequest) {
   const tagData = {
     tags: [
       {
-        name: "Newsletter Subscriber",
+        name: "Articles & Wellness insights Subscriber",
         status: "active"
       }
     ]

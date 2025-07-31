@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Script from "next/script";
 import { mailchimp } from "@/resources";
 import {
   Button,
@@ -42,11 +43,20 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
       return;
     }
 
+    // Execute reCAPTCHA v3 and get token dynamically
+    const token = await (window as any).grecaptcha.execute('6LfDIpYrAAAAANH8N6nXoXOj_1IZNvtelhpH13Qp', { action: 'submit' });
+
+    if (!token) {
+      setError("Captcha verification failed.");
+      setStatus("error");
+      return;
+    }
+
     try {
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, firstName, lastName, phone })
+        body: JSON.stringify({ email, firstName, lastName, phone, recaptchaToken: token })
       });
 
       const data = await res.json();
@@ -68,133 +78,128 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
   };
 
   return (
-    <Column
-      overflow="hidden"
-      fillWidth
-      padding="xl"
-      radius="l"
-      marginBottom="m"
-      horizontal="center"
-      align="center"
-      background="surface"
-      border="neutral-alpha-weak"
-    >
-      <Background
-        top="0"
-        position="absolute"
-        mask={mailchimp.effects.mask}
-        gradient={{
-          ...mailchimp.effects.gradient,
-          opacity: mailchimp.effects.gradient.opacity as opacity
-        }}
-        dots={{
-          ...mailchimp.effects.dots,
-          opacity: mailchimp.effects.dots.opacity as opacity,
-          size: mailchimp.effects.dots.size as SpacingToken
-        }}
-        grid={{
-          ...mailchimp.effects.grid,
-          opacity: mailchimp.effects.grid.opacity as opacity
-        }}
-        lines={{
-          ...mailchimp.effects.lines,
-          opacity: mailchimp.effects.lines.opacity as opacity,
-          size: mailchimp.effects.lines.size as SpacingToken
-        }}
-      />
+    <>
+      <Script src="https://www.google.com/recaptcha/api.js?render=6LfDIpYrAAAAANH8N6nXoXOj_1IZNvtelhpH13Qp" strategy="lazyOnload" />
 
-      <Heading style={{ position: "relative" }} marginBottom="s" variant="display-strong-xs">
-        {newsletter.title}
-      </Heading>
-
-      <Text
-        style={{ position: "relative", maxWidth: "var(--responsive-width-xs)" }}
-        wrap="balance"
-        marginBottom="l"
-        onBackground="neutral-medium"
+      <Column
+        overflow="hidden"
+        fillWidth
+        padding="xl"
+        radius="l"
+        marginBottom="m"
+        horizontal="center"
+        align="center"
+        background="surface"
+        border="neutral-alpha-weak"
       >
-        {newsletter.description}
-      </Text>
+        <Background
+          top="0"
+          position="absolute"
+          mask={mailchimp.effects.mask}
+          gradient={{
+            ...mailchimp.effects.gradient,
+            opacity: mailchimp.effects.gradient.opacity as opacity
+          }}
+          dots={{
+            ...mailchimp.effects.dots,
+            opacity: mailchimp.effects.dots.opacity as opacity,
+            size: mailchimp.effects.dots.size as SpacingToken
+          }}
+          grid={{
+            ...mailchimp.effects.grid,
+            opacity: mailchimp.effects.grid.opacity as opacity
+          }}
+          lines={{
+            ...mailchimp.effects.lines,
+            opacity: mailchimp.effects.lines.opacity as opacity,
+            size: mailchimp.effects.lines.size as SpacingToken
+          }}
+        />
 
-      <form onSubmit={handleSubmit}>
-        <Flex
-          id="mc_embed_signup_scroll"
-          fillWidth
-          maxWidth={24}
-          direction="column"
-          gap="16"
+        <Heading style={{ position: "relative" }} marginBottom="s" variant="display-strong-xs">
+          {newsletter.title}
+        </Heading>
+
+        <Text
+          style={{ position: "relative", maxWidth: "var(--responsive-width-xs)" }}
+          wrap="balance"
+          marginBottom="l"
+          onBackground="neutral-medium"
         >
-          {/* First Name + Last Name side-by-side on Web, stacked on Mobile */}
-          <Flex fillWidth gap="8" mobileDirection="column">
-            <Input
-              id="FNAME"
-              name="FNAME"
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
-            />
-            <Input
-              id="LNAME"
-              name="LNAME"
-              type="text"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
-            />
-          </Flex>
+          {newsletter.description}
+        </Text>
 
-          {/* Email Field */}
-          <Input
-            id="EMAIL"
-            name="EMAIL"
-            type="email"
-            placeholder="Your Email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            errorMessage={error}
-          />
-
-          {/* Phone Field + Hint */}
-          <Input
-            id="PHONE"
-            name="PHONE"
-            type="tel"
-            placeholder="Phone (Optional)"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-          <Text
-            variant="body-default-s"
-            onBackground="neutral-medium"
-            style={{ marginTop: "4px" }}
+        <form onSubmit={handleSubmit}>
+          <Flex
+            id="mc_embed_signup_scroll"
+            fillWidth
+            maxWidth={24}
+            direction="column"
+            gap="16"
           >
-            Phone number is optional for reciving updates instantly in whatsapp
-          </Text>
-
-          <div className="clear">
-            <Flex height="48" vertical="center">
-              <Button type="submit" size="m" fillWidth>
-                Subscribe
-              </Button>
+            <Flex fillWidth gap="8" mobileDirection="column">
+              <Input
+                id="FNAME"
+                name="FNAME"
+                type="text"
+                placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+              <Input
+                id="LNAME"
+                name="LNAME"
+                type="text"
+                placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
             </Flex>
-          </div>
-        </Flex>
-      </form>
 
-      {status === "success" && (
-        <Text onBackground="brand-strong" marginTop="s">
-          Subscription successful. Please check your email.
-        </Text>
-      )}
-      {status === "error" && (
-        <Text onBackground="accent-strong" marginTop="s">
-          {error}
-        </Text>
-      )}
-    </Column>
+            <Input
+              id="EMAIL"
+              name="EMAIL"
+              type="email"
+              placeholder="Your Email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              errorMessage={error}
+            />
+
+            <Input
+              id="PHONE"
+              name="PHONE"
+              type="tel"
+              placeholder="Phone"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+
+            <div className="clear">
+              <Flex height="48" vertical="center">
+                <Button type="submit" size="m" fillWidth>
+                  Subscribe
+                </Button>
+              </Flex>
+            </div>
+          </Flex>
+        </form>
+
+        {status === "success" && (
+          <Text onBackground="brand-strong" marginTop="s">
+            Subscription successful. Please check your email.
+          </Text>
+        )}
+        {status === "error" && (
+          <Text onBackground="accent-strong" marginTop="s">
+            {error}
+          </Text>
+        )}
+      </Column>
+    </>
   );
 };
