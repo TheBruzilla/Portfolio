@@ -85,15 +85,16 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
   }}
   dots={{
     ...mailchimp.effects.dots,
-    opacity: mailchimp.effects.dots.opacity as opacity // 👈 FIX HERE
+    opacity: mailchimp.effects.dots.opacity as opacity,  // ✅ Already Fixed
+    size: mailchimp.effects.dots.size as SpacingToken    // 👈 THIS IS MISSING, FIX HERE
   }}
   grid={{
     ...mailchimp.effects.grid,
-    opacity: mailchimp.effects.grid.opacity as opacity // 👈 FIX HERE
+    opacity: mailchimp.effects.grid.opacity as opacity
   }}
   lines={{
     ...mailchimp.effects.lines,
-    opacity: mailchimp.effects.lines.opacity as opacity // 👈 FIX HERE
+    opacity: mailchimp.effects.lines.opacity as opacity
   }}
 />
       <Heading style={{ position: "relative" }} marginBottom="s" variant="display-strong-xs">
