@@ -168,7 +168,7 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
             onChange={(e) => setPhone(e.target.value)}
           />
           <Text
-            variant="caption"
+            variant="body-default-s"
             onBackground="neutral-medium"
             style={{ marginTop: "4px" }}
           >
