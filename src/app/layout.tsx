@@ -5,7 +5,7 @@ import '@/resources/custom.css';
 import classNames from 'classnames';
 import { Background, Column, Flex, opacity, SpacingToken } from '@once-ui-system/core';
 import { Footer, Header, RouteGuard, Providers } from '@/components';
-import { baseURL, effects, fonts, style, dataStyle, home } from '@/resources';
+import { baseURL, effects, fonts, style, dataStyle } from '@/resources';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     siteName: 'Praneon',
     images: [
       {
-        url: '/images/og/portfolio-og-preview.jpg',
+        url: '/images/og/portfolio-og-preview.png',
         width: 1200,
         height: 630,
         alt: 'Praneon Portfolio Preview',
@@ -43,6 +43,29 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Vishal N",
+    "url": "https://praneon.com",
+    "image": "https://praneon.com/images/og/portfolio-og-preview.jpg",
+    "sameAs": [
+      "https://www.linkedin.com/in/vishal-n-praneon",
+      "https://github.com/TheBruzilla"
+    ],
+    "jobTitle": "Naturopathic Doctor | Wellness Innovator | AI Researcher",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "Praneon"
+    },
+    "description": "Vishal N is a holistic wellness practitioner integrating Iridology, AI technologies, and Naturopathy to create personalized health solutions.",
+    "knowsAbout": ["Iridology", "Naturopathy", "AI in Healthcare", "Wellness Consulting"],
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "BNYS University"
+    }
+  };
+
   return (
     <html lang="en" suppressHydrationWarning className={classNames(
       fonts.heading.variable,
@@ -85,6 +108,11 @@ export default function RootLayout({
               })();
             `
           }}
+        />
+        {/* JSON-LD Structured Data for SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body>
