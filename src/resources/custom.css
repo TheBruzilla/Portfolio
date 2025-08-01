@@ -52,3 +52,20 @@
   --scheme-neutral-600-50: rgba(137,152,159,0.5);
   /*
 }*/
+.grecaptcha-badge {
+  transform: scale(0.5) !important;  /* Shrink badge to 50% */
+  transform-origin: bottom right !important;
+  bottom: 8px !important;            /* Move closer to bottom */
+  right: 8px !important;             /* Move closer to right */
+  opacity: 0.3 !important;           /* Lower opacity but still visible */
+  z-index: 9999 !important;
+  transition: all 0.3s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  .grecaptcha-badge {
+    transform: scale(0.4) !important;  /* Even smaller on mobile */
+    bottom: 6px !important;
+    right: 6px !important;
+  }
+}
