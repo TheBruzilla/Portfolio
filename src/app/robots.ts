@@ -1,29 +1,18 @@
 import { type MetadataRoute } from 'next';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = 'https://praneon.com';
-
-  return [
-    {
-      url: `${siteUrl}/`,
-      lastModified: new Date(),
-    },
-    {
-      url: `${siteUrl}/about`,
-      lastModified: new Date(),
-    },
-    {
-      url: `${siteUrl}/gallery`,
-      lastModified: new Date(),
-    },
-    {
-      url: `${siteUrl}/work`,
-      lastModified: new Date(),
-    },
-    {
-      url: `${siteUrl}/blog`,
-      lastModified: new Date(),
-    },
-    // Add more dynamic routes if needed
-  ];
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: [
+          '/api/',    // API routes not needed for SEO
+          '/admin/',  // Future-proofing admin route if it exists
+          '/private/', // Any private folder if you plan to add
+        ],
+      },
+    ],
+    sitemap: 'https://praneon.com/sitemap.xml',
+  };
 }
