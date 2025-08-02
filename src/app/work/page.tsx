@@ -7,7 +7,7 @@ export async function generateMetadata() {
     title: work.title,
     description: work.description,
     baseURL: baseURL,
-    // image: `/api/og/generate?title=${encodeURIComponent(work.title)}`,
+    image: `/api/og/generate?title=${encodeURIComponent(work.title)}`,
     path: work.path,
   });
 }
@@ -21,15 +21,16 @@ export default function Work() {
         path={work.path}
         title={work.title}
         description={work.description}
-        // image={`/api/og/generate?title=${encodeURIComponent(work.title)}`}
+        image={`/api/og/generate?title=${encodeURIComponent(work.title)}`}
         author={{
           name: person.name,
           url: `${baseURL}${about.path}`,
-          image: `${baseURL}${person.avatar}`,
+          // image: `${baseURL}${person.avatar}`,
         }}
       />
       <Projects />
     </Column>
   );
 }
+
 
