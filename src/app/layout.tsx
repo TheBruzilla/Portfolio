@@ -1,3 +1,5 @@
+// src/app/layout.tsx
+
 import '@once-ui-system/core/css/styles.css';
 import '@once-ui-system/core/css/tokens.css';
 import '@/resources/custom.css';
@@ -38,11 +40,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -74,6 +72,12 @@ export default function RootLayout({
       fonts.code.variable
     )}>
       <head>
+        {/* Favicon Meta Tags */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="apple-touch-icon" href="/favicon.ico" />
+
+        {/* Theme Config & SEO Schema */}
         <script
           id="theme-init"
           dangerouslySetInnerHTML={{
@@ -173,5 +177,3 @@ export default function RootLayout({
         </Providers>
       </body>
     </html>
-  );
-}
