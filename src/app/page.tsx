@@ -1,10 +1,23 @@
 import React from "react";
+import {
+  Heading,
+  Flex,
+  Text,
+  Button,
+  Avatar,
+  RevealFx,
+  Column,
+  Badge,
+  Row,
+  Meta,
+  Schema
+} from "@once-ui-system/core";
 
-import { Heading, Flex, Text, Button, Avatar, RevealFx, Column, Badge, Row, Meta, Schema } from "@once-ui-system/core";
 import { home, about, person, newsletter, baseURL, routes } from "@/resources";
 import { Mailchimp } from "@/components";
 import { Projects } from "@/components/work/Projects";
 import { Posts } from "@/components/blog/Posts";
+import "@/resources/custom.css";  // Ensure this is imported for gradient CSS
 
 export default function Home() {
   return (
@@ -22,26 +35,42 @@ export default function Home() {
           image: `${baseURL}${person.avatar}`,
         }}
       />
+
       <Column fillWidth paddingY="24" gap="m">
         <Column maxWidth="s">
           {home.featured.display && (
-          <RevealFx fillWidth horizontal="start" paddingTop="16" paddingBottom="32" paddingLeft="12">
-            <Badge background="brand-alpha-weak" paddingX="12" paddingY="4" onBackground="neutral-strong" textVariant="label-default-s" arrow={false}
-              href={home.featured.href}>
-              <Row paddingY="2">{home.featured.title}</Row>
-            </Badge>
-          </RevealFx>
+            <RevealFx fillWidth horizontal="start" paddingTop="16" paddingBottom="32" paddingLeft="12">
+              <Badge
+                background="brand-alpha-weak"
+                paddingX="12"
+                paddingY="4"
+                onBackground="neutral-strong"
+                textVariant="label-default-s"
+                arrow={false}
+                href={home.featured.href}
+              >
+                <Row paddingY="2">{home.featured.title}</Row>
+              </Badge>
+            </RevealFx>
           )}
+
           <RevealFx translateY="4" fillWidth horizontal="start" paddingBottom="16">
-            <Heading wrap="balance" variant="display-strong-l">
+            <Heading wrap="balance" variant="display-strong-l" className="golden-gradient-text">
               {home.headline}
             </Heading>
           </RevealFx>
+
           <RevealFx translateY="8" delay={0.2} fillWidth horizontal="start" paddingBottom="32">
-            <Text wrap="balance" onBackground="neutral-weak" variant="heading-default-xl">
+            <Text
+              wrap="balance"
+              onBackground="neutral-weak"
+              variant="heading-default-xl"
+              className="golden-gradient-subline"
+            >
               {home.subline}
             </Text>
           </RevealFx>
+
           <RevealFx paddingTop="12" delay={0.4} horizontal="start" paddingLeft="12">
             <Button
               id="about"
@@ -67,9 +96,11 @@ export default function Home() {
           </RevealFx>
         </Column>
       </Column>
+
       <RevealFx translateY="16" delay={0.6}>
         <Projects range={[1, 1]} />
       </RevealFx>
+
       {routes["/blog"] && (
         <Flex fillWidth gap="24" mobileDirection="column">
           <Flex flex={1} paddingLeft="l" paddingTop="24">
@@ -82,6 +113,7 @@ export default function Home() {
           </Flex>
         </Flex>
       )}
+
       <Projects range={[2]} />
       {newsletter.display && <Mailchimp newsletter={newsletter} />}
     </Column>
