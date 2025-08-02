@@ -15,47 +15,57 @@ html, body {
   --font-heading: 'Ubuntu', sans-serif;
   --font-body: 'Ubuntu', sans-serif;
   --font-label: 'Ubuntu', sans-serif;
-  --font-code: monospace; /* Optional: Replace if needed */
+  --font-code: monospace;
 }
 
-/* Golden Metallic Gradient - Headline (Align. Heal. Thrive.) */
+/* Elegant Gold-Beige Gradient (Muted Metallic Look) */
 .golden-gradient-text {
   background: linear-gradient(
     90deg,
-    #f9d423 0%,    /* bright golden yellow */
-    #ffb547 25%,   /* deep gold */
-    #e0a800 50%,   /* mustard-gold */
-    #c48f00 75%,   /* bronze-ish gold */
-    #8a6e00 100%   /* antique gold with green undertone */
+    #c5c4a1 0%,    /* Soft Gold-Beige */
+    #d9d6b8 25%,   /* Light Champagne */
+    #e0dfb9 50%,   /* Ivory-Gold Glow */
+    #d9d6b8 75%,   
+    #c5c4a1 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
   text-shadow:
-    0 1px 1px rgba(0,0,0,0.15),
-    0 2px 1px rgba(255,255,255,0.25) inset;
+    0 1px 1px rgba(0,0,0,0.08),
+    0 2px 1px rgba(255,255,255,0.15) inset;
   font-weight: 800;
   display: inline-block;
+  background-size: 300% auto;
+  animation: shimmer 6s linear infinite;
 }
 
-/* Subline Gradient (Subheading Paragraph) */
+/* Subline Gradient */
 .golden-gradient-subline {
   background: linear-gradient(
     90deg,
-    #f9d423 0%,
-    #ffb547 25%,
-    #e0a800 50%,
-    #c48f00 75%,
-    #8a6e00 100%
+    #c5c4a1 0%,
+    #d9d6b8 25%,
+    #e0dfb9 50%,
+    #d9d6b8 75%,
+    #c5c4a1 100%
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   text-fill-color: transparent;
-  opacity: 0.9;
+  opacity: 0.85;
   font-weight: 600;
   display: inline-block;
+  background-size: 300% auto;
+  animation: shimmer 8s linear infinite;
+}
+
+/* Subtle Shine Animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 /* reCAPTCHA Badge Styling */
@@ -75,13 +85,4 @@ html, body {
     bottom: 6px !important;
     right: 6px !important;
   }
-}
-@keyframes shimmer {
-  0% { background-position: -100% 0; }
-  100% { background-position: 100% 0; }
-}
-
-.golden-gradient-text, .golden-gradient-subline {
-  background-size: 200% auto;
-  animation: shimmer 4s linear infinite;
 }
