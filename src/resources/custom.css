@@ -76,3 +76,12 @@ html, body {
     right: 6px !important;
   }
 }
+@keyframes shimmer {
+  0% { background-position: -100% 0; }
+  100% { background-position: 100% 0; }
+}
+
+.golden-gradient-text, .golden-gradient-subline {
+  background-size: 200% auto;
+  animation: shimmer 4s linear infinite;
+}
