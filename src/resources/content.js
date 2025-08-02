@@ -1,3 +1,5 @@
+// src/resources/content.js
+
 import { Logo } from "@once-ui-system/core";
 
 const person = {
@@ -6,21 +8,11 @@ const person = {
   get name() {
     return `${this.firstName} ${this.lastName}`;
   },
-  role: "Aspiring Doctor & Entrepreneur | Health & Wellness Enthusiast | Building Praneon — A New Way of Holistic Healing",
+  role: "Aspiring Doctor & Entrepreneur | Health & Wellness Enthusiast | Founder of Praneon",
   avatar: "/images/avatar.png",
   email: "vishal@praneon.com",
   location: "Asia/Kolkata",
   languages: ["English", "French", "Hindi", "Japanese", "Marathi", "Tamil"],
-};
-
-const newsletter = {
-  display: true,
-  title: `Subscribe to ${person.firstName}'s Wellness Insights`,
-  description: "I Will Share Articles & Wellness insights  on Wellness, Tech & Healing...",
-  mailchimp: {
-    apiKey: process.env.MAILCHIMP_API_KEY,
-    audience: process.env.MAILCHIMP_AUDIENCE_ID,
-  },
 };
 
 const social = [
@@ -46,26 +38,36 @@ const social = [
   },
 ];
 
+const newsletter = {
+  display: true,
+  title: `Subscribe to ${person.firstName}'s Wellness Insights`,
+  description: "Get exclusive articles & wellness insights on Holistic Healing, Tech, and Naturopathy directly in your inbox.",
+  mailchimp: {
+    apiKey: process.env.MAILCHIMP_API_KEY,
+    audience: process.env.MAILCHIMP_AUDIENCE_ID,
+  },
+};
+
 const home = {
   path: "/",
-  image: "/images/og/home.jpg",
   label: "Home",
   title: `${person.name}'s Portfolio`,
   description: `Showcasing my journey as a ${person.role}`,
   headline: "Align. Heal. Thrive.",
+  image: "/images/og/portfolio-og-preview.png",
   featured: {
     display: true,
-    title: "Recent Project: AI-Powered Iridology",
-    href: "/work/iridology-ai",  
+    title: "Featured Project: AI-Powered Iridology",
+    href: "/work/iridology-ai",
   },
-  subline: "I'm Vishal, a final-year BNYS student, integrating ancient naturopathy with modern AI-driven diagnostics. Exploring holistic wellness through my venture.",
+  subline: "Integrating ancient naturopathy with modern AI-driven diagnostics for a new era of holistic wellness.",
 };
 
 const about = {
   path: "/about",
   label: "About",
   title: `About – ${person.name}`,
-  description: `Meet ${person.name}, a ${person.role} based in Tamil Nadu`,
+  description: `Get to know ${person.name}, a visionary in holistic health innovations, currently pioneering AI-integrated Iridology under the brand Praneon.`,
   tableOfContent: {
     display: true,
     subItems: true,
@@ -81,32 +83,30 @@ const about = {
     display: true,
     title: "Introduction",
     description:
-      "An aspiring BNYS (Bachelor of Naturopathy & Yogic Sciences) doctor who's passionate about integrative healthcare, AI-driven Iridology, and holistic wellness ventures. Founder of Praneon Wellness Retreat Centre (in planning) — blending traditional healing sciences with modern wellness approaches.",
+      "I am an aspiring BNYS (Bachelor of Naturopathy & Yogic Sciences) doctor with a mission to bridge traditional healing systems with AI-powered diagnostics. Through Praneon, I’m developing wellness platforms that empower individuals with personalized, non-invasive health insights.",
   },
   work: {
     display: true,
     title: "Experience",
     experiences: [
       {
-        company: "Integrating AI in Iridology — Praneon Wellness",
+        company: "Praneon Wellness – AI-Driven Iridology",
         timeframe: "Jan 2023 - Present",
         role: "Founder & Innovator",
         achievements: [
-          "Developing AI-powered Iris diagnostic system focusing on preventive wellness insights aligned with Naturopathy.",
-          "Creating practitioner-assisting tools blending AI precision with human empathy for BNYS doctors.",
+          "Developing a Machine Learning-based Iridology Diagnostic System for preventive health assessments.",
+          "Creating digital tools that assist BNYS practitioners in combining AI precision with holistic healing practices.",
         ],
-        images: [], // Added empty images array
+        images: [],
       },
-      //{
-      //  company: "BNYS Internship – Pain Management Clinic",
-      //  timeframe: "2026 - 2027",
-      //  role: "Internship Trainee",
-      //  achievements: [
-      //    "Performed supervised clinical assessments for musculoskeletal disorders using Chiropractic & Acupuncture modalities.",
-      //    "Assisted in therapeutic Yoga sessions for lifestyle disease management and stress reduction.",
-      //  ],
-      //  images: [], // Added empty images array
-      //},
+      // Uncomment this when Internship is active
+      // {
+      //   company: "BNYS Internship – Pain Management Clinic",
+      //   timeframe: "2026 - 2027",
+      //   role: "Internship Trainee",
+      //   achievements: [...],
+      //   images: [],
+      // },
     ],
   },
   studies: {
@@ -115,13 +115,11 @@ const about = {
     institutions: [
       {
         name: "Sona Medical College of Naturopathy & Yoga",
-        description:
-          "Pursuing BNYS with specialization in holistic pain management, lifestyle medicine, and wellness retreat planning.",
+        description: "Currently pursuing BNYS, specializing in holistic pain management, lifestyle medicine, and wellness retreat conceptualization.",
       },
       {
         name: "Holy Cross Matriculation Higher Secondary School",
-        description:
-          "Completed Higher Secondary with active participation in Science Club, Debate Club, Health Camps, Cultural Events, and Environmental Initiatives.",
+        description: "Completed Higher Secondary education with active involvement in health camps, science clubs, and cultural initiatives.",
       },
     ],
   },
@@ -131,27 +129,23 @@ const about = {
     skills: [
       {
         title: "AI-Driven Iridology",
-        description:
-          "Integrating AI vision systems to automate Iris diagnostics for preventive health assessments and practitioner-support tools.",
-        images: [], // Added empty images array
+        description: "Integrating AI vision systems to analyze Iris patterns for non-invasive preventive health assessments.",
+        images: [],
       },
       {
         title: "Holistic Pain & Lifestyle Disease Management",
-        description:
-          "Proficient in Acupuncture, Hydrotherapy, Mud Therapy, and Manual Chiropractic techniques for managing chronic conditions.",
-        images: [], // Added empty images array
+        description: "Expertise in Naturopathic modalities like Acupuncture, Hydrotherapy, Mud Therapy, and Manual Therapies.",
+        images: [],
       },
       {
-        title: "Wellness Retreat Conceptualization",
-        description:
-          "Planning nature-integrated retreat experiences blending yoga therapy, hydrotherapy, and personalized wellness programs.",
-        images: [], // Added empty images array
+        title: "Wellness Retreat Planning",
+        description: "Designing immersive wellness experiences that blend Yoga, Hydrotherapy, and personalized healing programs.",
+        images: [],
       },
       {
-        title: "Business Development & Brand Strategy",
-        description:
-          "Strategizing e-commerce and wellness brand positioning with a focus on holistic health products and services.",
-        images: [], // Added empty images array
+        title: "Brand Strategy & Wellness Business Development",
+        description: "Strategizing holistic wellness brand positioning and e-commerce initiatives under Praneon.",
+        images: [],
       },
     ],
   },
@@ -160,22 +154,22 @@ const about = {
 const blog = {
   path: "/blog",
   label: "Articles & Blogs",
-  title: "Sharing Thoughts on Wellness, Tech & Healing...",
-  description: `Read latest articles by ${person.name} on modern holistic practices`,
+  title: "Insights & Articles on Wellness, Technology & Holistic Healing",
+  description: `Latest blogs by ${person.name} on Integrative Healthcare & AI-driven Wellness Innovations.`,
 };
 
 const work = {
   path: "/work",
   label: "Projects",
   title: `Projects – ${person.name}`,
-  description: `Innovative projects blending Naturopathy & Technology by ${person.name}`,
+  description: `Innovative projects where ${person.name} blends Naturopathy and Technology for futuristic wellness solutions.`,
 };
 
 const gallery = {
   path: "/gallery",
   label: "Gallery",
-  title: `Photo Gallery – ${person.name}`,
-  description: `A visual showcase of my journey in wellness & personal ventures`,
+  title: `Visual Gallery – ${person.name}`,
+  description: "Explore visual moments from my journey in holistic wellness & personal ventures.",
   images: [
     {
       src: "/images/gallery/Personal Bio Pic.jpg",
