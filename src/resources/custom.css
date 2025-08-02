@@ -8,19 +8,23 @@
 }
 
 /* Apply Surgena Globally */
-html {
-  font-family: 'Surgena', sans-serif;
+html, body {
+  font-family: 'Surgena', sans-serif !important;
+  overflow-x: hidden !important;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Ensure Once-UI CSS Variables use Surgena */
+/* Once-UI CSS Variables mapped to Surgena */
 :root {
-  --font-body: 'Surgena', sans-serif;
   --font-heading: 'Surgena', sans-serif;
+  --font-body: 'Surgena', sans-serif;
   --font-label: 'Surgena', sans-serif;
-  --font-code: monospace; /* Or keep Geist_Mono if you prefer */
+  --font-code: monospace; /* You can replace with 'Geist Mono' if required */
 }
 
-/* Uncomment and customize this block if you want to override color schemes via CSS Variables */
+/* Color Schemes (Keep Uncommented if customizing them) */
 /*
 :root {
   --scheme-brand-100: #08002f;
@@ -77,9 +81,9 @@ html {
 .grecaptcha-badge {
   transform: scale(0.5) !important;  /* Shrink badge to 50% */
   transform-origin: bottom right !important;
-  bottom: 8px !important;            /* Move closer to bottom */
-  right: 8px !important;             /* Move closer to right */
-  opacity: 0.3 !important;           /* Lower opacity but still visible */
+  bottom: 8px !important;
+  right: 8px !important;
+  opacity: 0.3 !important;
   z-index: 9999 !important;
   transition: all 0.3s ease-in-out;
 }
@@ -90,12 +94,4 @@ html {
     bottom: 6px !important;
     right: 6px !important;
   }
-}
-
-/* Global Layout Fix to Remove Horizontal Scroll */
-html, body {
-  overflow-x: hidden !important;
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
