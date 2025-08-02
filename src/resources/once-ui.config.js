@@ -1,8 +1,9 @@
 import { home } from "./content";
 
-// IMPORTANT: Replace with your own domain address - it's used for SEO in meta tags and schema
+// Base URL for SEO, OG tags, Canonical URLs
 const baseURL = "https://praneon.com";
 
+// Publicly accessible routes for sitemap & navigation
 const routes = {
   "/": true,
   "/about": true,
@@ -11,19 +12,19 @@ const routes = {
   "/gallery": true,
 };
 
+// Global Display Toggles
 const display = {
   location: true,
   time: true,
-  themeSwitcher: true
+  themeSwitcher: true,
 };
 
-// Enable password protection on selected routes
-// Set password in the .env file, refer to .env.example
+// Password-protected Routes (Optional)
 const protectedRoutes = {
   "/work/automate-design-handovers-with-a-figma-to-code-pipeline": true,
 };
 
-// Fonts Configuration
+// Fonts Configuration (Google Fonts - Geist)
 import { Geist } from "next/font/google";
 import { Geist_Mono } from "next/font/google";
 
@@ -58,7 +59,7 @@ const fonts = {
   code,
 };
 
-// Global Style Tokens
+// Global Style Tokens (Once UI Design Tokens)
 const style = {
   theme: "system",
   neutral: "gray",
@@ -72,6 +73,7 @@ const style = {
   scaling: "100",
 };
 
+// Data Visualization Style
 const dataStyle = {
   variant: "gradient",
   mode: "categorical",
@@ -82,11 +84,11 @@ const dataStyle = {
   tick: {
     fill: "var(--neutral-on-background-weak)",
     fontSize: 11,
-    line: false
+    line: false,
   },
 };
 
-// Visual Effects (Mailchimp Section Design Effects)
+// Design Effects (For background visuals like gradients, dots, etc.)
 const effects = {
   mask: {
     cursor: true,
@@ -128,23 +130,36 @@ const effects = {
   },
 };
 
-// Mailchimp no longer needs 'action' URL here.
+// Mailchimp config (effects are used for styling subscription section)
 const mailchimp = {
   effects,
 };
 
-// SEO Schema
+// SEO Schema Details (JSON-LD Schema.org)
 const schema = {
-  logo: "",
+  logo: "trademarks/praneon.svg", // Optional: Add '/images/logo.png' if you wish
   type: "Organization",
   name: "Praneon",
   description: home.description,
   email: "vishal@praneon.com",
 };
 
-// Social Profiles
+// Social Profiles for schema.org sameAs
 const sameAs = {
   linkedin: "https://www.linkedin.com/company/praneon/",
 };
 
-export { display, mailchimp, routes, protectedRoutes, baseURL, fonts, style, schema, sameAs, effects, dataStyle };
+// Final Export
+export {
+  display,
+  mailchimp,
+  routes,
+  protectedRoutes,
+  baseURL,
+  fonts,
+  style,
+  schema,
+  sameAs,
+  effects,
+  dataStyle,
+};
