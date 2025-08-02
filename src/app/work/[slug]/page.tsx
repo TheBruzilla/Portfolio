@@ -66,7 +66,7 @@ export default async function Project({
         author={{
           name: person.name,
           url: `${baseURL}${about.path}`,
-          image: `${baseURL}${person.avatar}`,
+          // image: `${baseURL}${person.avatar}`,
         }}
       />
       <Column maxWidth="xs" gap="16">
@@ -97,3 +97,4 @@ export default async function Project({
     </Column>
   );
 }
+
