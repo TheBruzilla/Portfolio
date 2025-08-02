@@ -15,24 +15,47 @@ html, body {
   --font-heading: 'Ubuntu', sans-serif;
   --font-body: 'Ubuntu', sans-serif;
   --font-label: 'Ubuntu', sans-serif;
-  --font-code: monospace; /* Optional: Use Geist_Mono or other monospace if needed */
+  --font-code: monospace; /* Optional: Replace if needed */
 }
 
-/* Golden Gradient Heading (Align. Heal. Thrive.) */
+/* Golden Metallic Gradient - Headline (Align. Heal. Thrive.) */
 .golden-gradient-text {
-  background: linear-gradient(90deg, #FFD700, #E3C565, #FFD700);
+  background: linear-gradient(
+    90deg,
+    #f9d423 0%,    /* bright golden yellow */
+    #ffb547 25%,   /* deep gold */
+    #e0a800 50%,   /* mustard-gold */
+    #c48f00 75%,   /* bronze-ish gold */
+    #8a6e00 100%   /* antique gold with green undertone */
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  text-shadow:
+    0 1px 1px rgba(0,0,0,0.15),
+    0 2px 1px rgba(255,255,255,0.25) inset;
+  font-weight: 800;
   display: inline-block;
 }
 
-/* Golden Gradient Subline (Subtext Paragraph) */
+/* Subline Gradient (Subheading Paragraph) */
 .golden-gradient-subline {
-  background: linear-gradient(90deg, #FFD700, #E3C565, #FFD700);
+  background: linear-gradient(
+    90deg,
+    #f9d423 0%,
+    #ffb547 25%,
+    #e0a800 50%,
+    #c48f00 75%,
+    #8a6e00 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  opacity: 0.9;
+  font-weight: 600;
   display: inline-block;
-  opacity: 0.9; /* Slightly subtle than heading */
 }
 
 /* reCAPTCHA Badge Styling */
