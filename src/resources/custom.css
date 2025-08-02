@@ -18,6 +18,23 @@ html, body {
   --font-code: monospace; /* Optional: Use Geist_Mono or other monospace if needed */
 }
 
+/* Golden Gradient Heading (Align. Heal. Thrive.) */
+.golden-gradient-text {
+  background: linear-gradient(90deg, #FFD700, #E3C565, #FFD700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* Golden Gradient Subline (Subtext Paragraph) */
+.golden-gradient-subline {
+  background: linear-gradient(90deg, #FFD700, #E3C565, #FFD700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  opacity: 0.9; /* Slightly subtle than heading */
+}
+
 /* reCAPTCHA Badge Styling */
 .grecaptcha-badge {
   transform: scale(0.5) !important;
