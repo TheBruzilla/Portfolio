@@ -1,10 +1,10 @@
 import { home } from "./content";
 
 // Base URL for SEO, OG tags, Canonical URLs
-const baseURL = "https://praneon.com";
+export const baseURL = "https://praneon.com";
 
 // Publicly accessible routes for sitemap & navigation
-const routes = {
+export const routes = {
   "/": true,
   "/about": true,
   "/work": true,
@@ -13,54 +13,27 @@ const routes = {
 };
 
 // Global Display Toggles
-const display = {
+export const display = {
   location: true,
   time: true,
   themeSwitcher: true,
 };
 
 // Password-protected Routes (Optional)
-const protectedRoutes = {
+export const protectedRoutes = {
   "/work/automate-design-handovers-with-a-figma-to-code-pipeline": true,
 };
 
-// Fonts Configuration (Google Fonts - Geist)
-import { Geist } from "next/font/google";
-import { Geist_Mono } from "next/font/google";
-
-const heading = Geist({
-  variable: "--font-heading",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const body = Geist({
-  variable: "--font-body",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const label = Geist({
-  variable: "--font-label",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const code = Geist_Mono({
-  variable: "--font-code",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const fonts = {
-  heading,
-  body,
-  label,
-  code,
+// Fonts Configuration — Now mapped to Surgena via CSS Variables
+export const fonts = {
+  heading: { variable: "--font-heading" },
+  body: { variable: "--font-body" },
+  label: { variable: "--font-label" },
+  code: { variable: "--font-code" }, // Optional: Keep Geist_Mono if you want monospace; else map to Surgena too
 };
 
 // Global Style Tokens (Once UI Design Tokens)
-const style = {
+export const style = {
   theme: "system",
   neutral: "gray",
   brand: "green",
@@ -74,7 +47,7 @@ const style = {
 };
 
 // Data Visualization Style
-const dataStyle = {
+export const dataStyle = {
   variant: "gradient",
   mode: "categorical",
   height: 24,
@@ -89,7 +62,7 @@ const dataStyle = {
 };
 
 // Design Effects (For background visuals like gradients, dots, etc.)
-const effects = {
+export const effects = {
   mask: {
     cursor: true,
     x: 50,
@@ -131,13 +104,13 @@ const effects = {
 };
 
 // Mailchimp config (effects are used for styling subscription section)
-const mailchimp = {
+export const mailchimp = {
   effects,
 };
 
 // SEO Schema Details (JSON-LD Schema.org)
-const schema = {
-  logo: "trademarks/praneon.svg", // Optional: Add '/images/logo.png' if you wish
+export const schema = {
+  logo: "trademarks/praneon.svg", // Updated logo path
   type: "Organization",
   name: "Praneon",
   description: home.description,
@@ -145,7 +118,7 @@ const schema = {
 };
 
 // Social Profiles for schema.org sameAs
-const sameAs = {
+export const sameAs = {
   linkedin: "https://www.linkedin.com/company/praneon/",
 };
 
