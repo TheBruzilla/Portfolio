@@ -1,3 +1,25 @@
+/* Import Surgena Font */
+@font-face {
+  font-family: 'Surgena';
+  src: url('/fonts/surgena/Surgena-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Apply Surgena Globally */
+html {
+  font-family: 'Surgena', sans-serif;
+}
+
+/* Ensure Once-UI CSS Variables use Surgena */
+:root {
+  --font-body: 'Surgena', sans-serif;
+  --font-heading: 'Surgena', sans-serif;
+  --font-label: 'Surgena', sans-serif;
+  --font-code: monospace; /* Or keep Geist_Mono if you prefer */
+}
+
 /* Uncomment and customize this block if you want to override color schemes via CSS Variables */
 /*
 :root {
