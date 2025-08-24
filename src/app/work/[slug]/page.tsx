@@ -12,15 +12,14 @@ import {
   Row,
   Text,
 } from "@once-ui-system/core";
-import { baseURL, about, work as workCfg, person } from "@/resources";
+import { baseURL, about, blog, person } from "@/resources";
 import { formatDate } from "@/utils/formatDate";
 import { getPosts } from "@/utils/utils";
 import type { Metadata } from "next";
 
-// Build-time params
+// Static params unchanged
 export async function generateStaticParams() {
-  // Adjust the path segments to where your project MDX files live
-  const posts = getPosts(["src", "app", "work", "projects"]);
+  const posts = getPosts(["src", "app", "blog", "posts"]);
   return posts.map((post) => ({ slug: post.slug }));
 }
 
@@ -29,15 +28,15 @@ type PageProps = {
   params: Promise<{ slug: string | string[] }>;
 };
 
-// Metadata per project
 export async function generateMetadata(
   { params }: PageProps
 ): Promise<Metadata> {
   const { slug } = await params;
   const slugStr = Array.isArray(slug) ? slug.join("/") : slug;
 
-  const posts = getPosts(["src", "app", "work", "projects"]);
+  const posts = getPosts(["src", "app", "blog", "posts"]);
   const post = posts.find((p) => p.slug === slugStr);
+
   if (!post) return {};
 
   return Meta.generate({
@@ -47,23 +46,22 @@ export async function generateMetadata(
     image:
       post.metadata.image ||
       `/api/og/generate?title=${encodeURIComponent(post.metadata.title)}`,
-    path: `${workCfg.path}/${post.slug}`,
-    canonical: `${baseURL}${workCfg.path}/${post.slug}`,
+    path: `${blog.path}/${post.slug}`,
+    canonical: `${baseURL}${blog.path}/${post.slug}`,
   });
 }
 
-export default async function WorkProjectPage(
+export default async function Blog(
   { params }: PageProps
 ) {
   const { slug } = await params;
   const slugStr = Array.isArray(slug) ? slug.join("/") : slug;
 
-  const posts = getPosts(["src", "app", "work", "projects"]);
+  const posts = getPosts(["src", "app", "blog", "posts"]);
   const post = posts.find((p) => p.slug === slugStr);
 
   if (!post) notFound();
 
-  // Optional team avatars if your MDX frontmatter includes them
   const avatars =
     post.metadata.team?.map((member: { avatar: string }) => ({ src: member.avatar })) || [];
 
@@ -73,9 +71,9 @@ export default async function WorkProjectPage(
       <Row fillWidth horizontal="center">
         <Column as="section" maxWidth="xs" gap="l">
           <Schema
-            as="article"
+            as="blogPosting"
             baseURL={baseURL}
-            path={`${workCfg.path}/${post.slug}`}
+            path={`${blog.path}/${post.slug}`}
             title={post.metadata.title}
             description={post.metadata.summary}
             datePublished={post.metadata.publishedAt}
@@ -93,13 +91,13 @@ export default async function WorkProjectPage(
 
           <Button
             data-border="rounded"
-            href="/work"
+            href="/blog"
             weight="default"
             variant="tertiary"
             size="s"
             prefixIcon="chevronLeft"
           >
-            Projects
+            Posts
           </Button>
 
           <Heading variant="display-strong-s">{post.metadata.title}</Heading>
