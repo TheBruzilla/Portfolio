@@ -17,17 +17,18 @@ import { formatDate } from "@/utils/formatDate";
 import { getPosts } from "@/utils/utils";
 import type { Metadata } from "next";
 
-// Static params unchanged
+// Static params for prerendering
 export async function generateStaticParams() {
   const posts = getPosts(["src", "app", "blog", "posts"]);
   return posts.map((post) => ({ slug: post.slug }));
 }
 
-// ---- Next 15: params is a Promise; await it
+// ✅ Next 15: params is a Promise
 type PageProps = {
   params: Promise<{ slug: string | string[] }>;
 };
 
+// Metadata
 export async function generateMetadata(
   { params }: PageProps
 ): Promise<Metadata> {
@@ -51,7 +52,8 @@ export async function generateMetadata(
   });
 }
 
-export default async function Blog(
+// Page
+export default async function BlogPage(
   { params }: PageProps
 ) {
   const { slug } = await params;
@@ -63,7 +65,9 @@ export default async function Blog(
   if (!post) notFound();
 
   const avatars =
-    post.metadata.team?.map((member: { avatar: string }) => ({ src: member.avatar })) || [];
+    post.metadata.team?.map((member: { avatar: string }) => ({
+      src: member.avatar,
+    })) || [];
 
   return (
     <Row fillWidth>
@@ -100,12 +104,20 @@ export default async function Blog(
             Posts
           </Button>
 
-          <Heading variant="display-strong-s">{post.metadata.title}</Heading>
+          <Heading variant="display-strong-s">
+            {post.metadata.title}
+          </Heading>
 
           <Row gap="12" vertical="center">
-            {avatars.length > 0 && <AvatarGroup size="s" avatars={avatars} />}
-            <Text variant="body-default-s" onBackground="neutral-weak">
-              {post.metadata.publishedAt && formatDate(post.metadata.publishedAt)}
+            {avatars.length > 0 && (
+              <AvatarGroup size="s" avatars={avatars} />
+            )}
+            <Text
+              variant="body-default-s"
+              onBackground="neutral-weak"
+            >
+              {post.metadata.publishedAt &&
+                formatDate(post.metadata.publishedAt)}
             </Text>
           </Row>
 
