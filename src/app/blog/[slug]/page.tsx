@@ -1,41 +1,68 @@
 import { notFound } from "next/navigation";
 import { CustomMDX, ScrollToHash } from "@/components";
-import { Meta, Schema, AvatarGroup, Button, Column, Heading, HeadingNav, Icon, Row, Text } from "@once-ui-system/core";
+import {
+  Meta,
+  Schema,
+  AvatarGroup,
+  Button,
+  Column,
+  Heading,
+  HeadingNav,
+  Icon,
+  Row,
+  Text,
+} from "@once-ui-system/core";
 import { baseURL, about, blog, person } from "@/resources";
 import { formatDate } from "@/utils/formatDate";
 import { getPosts } from "@/utils/utils";
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
+// Static params unchanged
 export async function generateStaticParams() {
   const posts = getPosts(["src", "app", "blog", "posts"]);
   return posts.map((post) => ({ slug: post.slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string | string[] } }): Promise<Metadata> {
-  const slug = Array.isArray(params.slug) ? params.slug.join('/') : params.slug;
-  const posts = getPosts(["src", "app", "blog", "posts"]);
-  const post = posts.find((post) => post.slug === slug);
+// ---- Next 15: params is a Promise; await it
+type PageProps = {
+  params: Promise<{ slug: string | string[] }>;
+};
 
+export async function generateMetadata(
+  { params }: PageProps
+): Promise<Metadata> {
+  const { slug } = await params;
+  const slugStr = Array.isArray(slug) ? slug.join("/") : slug;
+
+  const posts = getPosts(["src", "app", "blog", "posts"]);
+  const post = posts.find((p) => p.slug === slugStr);
   if (!post) return {};
 
   return Meta.generate({
     title: post.metadata.title,
     description: post.metadata.summary,
     baseURL,
-    image: post.metadata.image || `/api/og/generate?title=${encodeURIComponent(post.metadata.title)}`,
+    image:
+      post.metadata.image ||
+      `/api/og/generate?title=${encodeURIComponent(post.metadata.title)}`,
     path: `${blog.path}/${post.slug}`,
-    canonical: `${baseURL}${blog.path}/${post.slug}`,  // Canonical URL
+    canonical: `${baseURL}${blog.path}/${post.slug}`,
   });
 }
 
-export default async function Blog({ params }: { params: { slug: string | string[] } }) {
-  const slug = Array.isArray(params.slug) ? params.slug.join('/') : params.slug;
+export default async function Blog(
+  { params }: PageProps
+) {
+  const { slug } = await params;
+  const slugStr = Array.isArray(slug) ? slug.join("/") : slug;
+
   const posts = getPosts(["src", "app", "blog", "posts"]);
-  const post = posts.find((post) => post.slug === slug);
+  const post = posts.find((p) => p.slug === slugStr);
 
   if (!post) notFound();
 
-  const avatars = post.metadata.team?.map((member) => ({ src: member.avatar })) || [];
+  const avatars =
+    post.metadata.team?.map((member) => ({ src: member.avatar })) || [];
 
   return (
     <Row fillWidth>
@@ -50,7 +77,10 @@ export default async function Blog({ params }: { params: { slug: string | string
             description={post.metadata.summary}
             datePublished={post.metadata.publishedAt}
             dateModified={post.metadata.publishedAt}
-            image={post.metadata.image || `/api/og/generate?title=${encodeURIComponent(post.metadata.title)}`}
+            image={
+              post.metadata.image ||
+              `/api/og/generate?title=${encodeURIComponent(post.metadata.title)}`
+            }
             author={{
               name: person.name,
               url: `${baseURL}${about.path}`,
@@ -58,7 +88,14 @@ export default async function Blog({ params }: { params: { slug: string | string
             }}
           />
 
-          <Button data-border="rounded" href="/blog" weight="default" variant="tertiary" size="s" prefixIcon="chevronLeft">
+          <Button
+            data-border="rounded"
+            href="/blog"
+            weight="default"
+            variant="tertiary"
+            size="s"
+            prefixIcon="chevronLeft"
+          >
             Posts
           </Button>
 
@@ -79,8 +116,22 @@ export default async function Blog({ params }: { params: { slug: string | string
         </Column>
       </Row>
 
-      <Column maxWidth={12} paddingLeft="40" fitHeight position="sticky" top="80" gap="16" hide="m">
-        <Row gap="12" paddingLeft="2" vertical="center" onBackground="neutral-medium" textVariant="label-default-s">
+      <Column
+        maxWidth={12}
+        paddingLeft="40"
+        fitHeight
+        position="sticky"
+        top="80"
+        gap="16"
+        hide="m"
+      >
+        <Row
+          gap="12"
+          paddingLeft="2"
+          vertical="center"
+          onBackground="neutral-medium"
+          textVariant="label-default-s"
+        >
           <Icon name="document" size="xs" />
           On this page
         </Row>
