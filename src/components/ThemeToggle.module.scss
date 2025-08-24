@@ -8,3 +8,16 @@
     height: 1em;
   }
 }
+.theme-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem; /* adjust size if needed */
+  line-height: 1;
+}

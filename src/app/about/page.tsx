@@ -106,7 +106,7 @@ export default function About() {
               {person.location}
             </Flex>
             {person.languages?.length > 0 && (
-              <Flex wrap gap="8">
+              <Flex wrap gap="8" horizontal="center" fillWidth>
                 {person.languages.map((language) => (
                   <Tag key={language} size="l">
                     {language}
